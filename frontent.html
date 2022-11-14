@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <base target="_top">
+    <link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" >
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <style>
+      .generated-images {
+        position: relative;
+      }
+      .generated-images:hover {
+        cursor: pointer;
+      }
+      .generated-images:hover img{
+        opacity: 0.5;
+      }
+      .generated-images:hover span{
+        opacity: 1;
+      }
+      .generated-images img{
+        width: 100%; 
+        display: block;
+        border-radius: 5px;
+        transition: 0.5s;
+        opacity: 1;
+
+      }
+      .generated-images span{
+        display: block;
+        position: absolute;
+        color: #000000;
+        width: 50%;
+        margin: auto;
+        right: 0;
+        left: 0;
+        bottom: 2%;
+        text-align: center;
+        vertical-align: bottom;
+        border-radius: 5px;
+        background: #ccc;
+        transition: 0.5s;
+        opacity: 0.0;
+
+      }
+
+      .loader {
+        border: 16px solid #f3f3f3; /* Light grey */
+        border-top: 16px solid #3498db; /* Blue */
+        border-radius: 50%;
+        width: 120px;
+        height: 120px;
+        animation: spin 2s linear infinite;
+        position: absolute; 
+        margin: auto;
+        right: 0;
+        left: 0;
+        top: 0;
+        bottom: 0;
+        opacity: 0;
+      }
+
+      .loader:active {
+        opacity: 1;
+      }
+
+
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+      #range-block {
+        margin-top: 5px;
+      }
+      #range-label {
+        display:inline-block;
+        margin-top:auto;
+      }
+
+
+        .parent>.row{
+            margin: 10px;
+        }
+        .col img{
+            height:70px;
+            width: 100%;
+            cursor: pointer;
+            transition: transform 1s;
+            object-fit: cover;
+        }
+        .col label{
+            overflow: hidden;
+            position: relative;
+        }
+        .imgbgchk:checked + label>.tick_container{
+            opacity: 1;
+        }
+/*         aNIMATION */
+        .imgbgchk:checked + label>img{
+            transform: scale(1.25);
+            opacity: 0.3;
+        }
+        .tick_container {
+            transition: .5s ease;
+            opacity: 0;
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            -ms-transform: translate(-50%, -50%);
+            cursor: pointer;
+            text-align: center;
+        }
+        .tick {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 16px;
+            padding: 6px 12px;
+            height: 40px;
+            width: 40px;
+            border-radius: 100%;
+        }
+    </style>
+  </head>
+  <body>
+
+    <form class="form">
+
+      <div class="d-flex flex-column flex-shrink-0 p-3 bg-light" >
+        <div class="form-group row form-floating">
+          <textarea class="form-control form-control-sm" placeholder="." id="prompt-text" style="height: 100px"></textarea>
+          <label for="prompt-text">Descripe an image here</label>
+        </div>
+
+        <div class="form-group row g-3 align-items-center" id="range-block">
+          <div class="col-auto" id="range-label" >
+            <label for="num-images" class="col-form-label">Samples</label>
+          </div>
+          <div class="col-auto">
+            <input type="range" min="1" max="4" value="2" class="form-range" id="num-images" name="num-images" onchange="updateNumImagesOut(this.value)" />
+          </div>
+          <div class="col-auto">
+            <span id="passwordHelpInline"  class="align-top form-text ">
+              <output id="num-images-output"></output>
+            </span>
+          </div>
+        </div>
+
+
+        <div class="accordion" id="accordionPanelsStayOpenExample">
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingOne">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseOne" aria-expanded="true" aria-controls="panelsStayOpen-collapseOne">
+                Image Settings
+              </button>
+            </h2>
+            <div id="panelsStayOpen-collapseOne" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingOne">
+              <div class="accordion-body">
+
+                <div class="container parent">
+                  <span>Orientation:</span>
+                  <div class="row">
+                      <div class='col text-center'>
+                        <input type="radio" name="orientation" id="img2" class="d-none imgbgchk" value="landscape" checked>
+                        <label for="img2">
+                          <img src="https://dummyimage.com/920x512/000/fff" alt="Image 2">
+                          <div class="tick_container">
+                            <div class="tick"><i class="fa fa-check"></i></div>
+                          </div>
+                        </label>
+                      </div>
+
+                      <div class='col text-center'>
+                        <input type="radio" name="orientation" id="img1" class="d-none imgbgchk" value="portrait">
+                        <label for="img1">
+                          <img src="https://dummyimage.com/384x512/000/fff" alt="Image 1">
+                          <div class="tick_container">
+                            <div class="tick"><i class="fa fa-check"></i></div>
+                          </div>
+                          </label>
+                      </div>
+                       <div class='col text-center'>
+                        <input type="radio" name="orientation" id="img3" class="d-none imgbgchk" value="square">
+                        <label for="img3">
+                          <img src="https://dummyimage.com/512x512/000/fff" alt="Image 3">
+                          <div class="tick_container">
+                            <div class="tick"><i class="fa fa-check"></i></div>
+                          </div>
+                          </label>
+                      </div>
+
+                    </div>
+
+                </div>
+
+                <div class="input-group ">
+      
+                  <!-- declaration for first field -->
+                  <select class="form-control form-control-sm">
+                    <option value="" disabled selected>Coloring...</option>
+                    <option value="colored">Full color</option>
+                    <option value="bw">Black and White</option>
+                  </select>
+            
+                  <select class="form-control form-control-sm">
+                    <option value="" disabled selected>Type...</option>
+                    <option value="photo">Photograph</option>
+                    <option value="Drawing">Drawing</option>
+                    <option value="sketch">Sketch</option>
+                    <option value="painting">Painting</option>
+                    <option value="illustration">Illustration</option>
+                    <option value="graphic-design">Graphic Design</option>
+                  </select>
+
+                  <select class="form-control form-control-sm">
+                    <option value="" disabled selected>Style...</option>
+                    <option value="pop-art">Pop Art</option>
+                    <option value="comic">Comic</option>
+                    <option value="Retro">Retro</option>
+                    <option value="Retro">Disney</option>
+                    <option value="van-gogh">Van Gogh</option>
+                    <option value="Picaso">Picaso</option>
+                    <option value="Dali">Dali</option>
+                    <option value="Kusama">Yayoi Kusama</option>
+
+                  </select>
+                </div>
+
+
+              </div>
+            </div>
+          </div>
+          <div class="accordion-item">
+            <h2 class="accordion-header" id="panelsStayOpen-headingTwo">
+              <button class="accordion-button collapsed" type="button" data-bs-toggle="collapse" data-bs-target="#panelsStayOpen-collapseTwo" aria-expanded="false" aria-controls="panelsStayOpen-collapseTwo">
+                Advanced Settings
+              </button>
+            </h2>
+            <div id="panelsStayOpen-collapseTwo" class="accordion-collapse collapse" aria-labelledby="panelsStayOpen-headingTwo">
+              <div class="accordion-body">
+                <div class="form-group row form-floating">
+                  <textarea class="form-control form-control-sm" placeholder="." id="negative-prompt" style="height: 60px"></textarea>
+                  <label for="negative-prompt">exclude from image</label>
+                </div>
+
+                <div class="form-group row g-3 align-items-center form-control-sm" id="range-block">
+                  <div class="col-auto" id="range-label" >
+                    <label for="seed" class="col-form-label">Seed:</label>
+                  </div>
+                  <div class="col-auto">
+                    <input type="range" min="1" max="10" value="1" class="form-range" id="seed" name="seed" onchange="updateSeedOut(this.value)" />
+                  </div>
+                  <div class="col-auto">
+                    <span id="passwordHelpInline"  class="align-top form-text ">
+                      (<output id="seed-output"></output>)
+                    </span>
+                      <input type="checkbox" class="custom-control-input" onchange="toggleSeed()" id="customControlAutosizing">
+                      <label class="custom-control-label" for="customControlAutosizing">Randomise results</label>
+                  </div>
+                </div> 
+
+                <div class="form-group row g-3 align-items-center  form-control-sm" id="range-block">
+                  <div class="col-auto" id="range-label" >
+                    <label for="steps" class="col-form-label">Steps:</label>
+                  </div>
+                  <div class="col-auto">
+                    <input type="range" min="30" max="70" value="50" class="form-range" id="steps" name="steps" onchange="updateStepsOut(this.value)" />
+                  </div>
+                  <div class="col-auto">
+                    <span id="passwordHelpInline"  class="align-top form-text ">
+                      (<output id="steps-output"></output>)
+                    </span>
+                  </div>
+                </div> 
+
+                <input class="form-control form-control-sm" type="text" id="image" name="base-image" placeholder="Base image url" />
+
+
+              </div>
+
+            </div>
+
+           
+
+          </div>
+        </div>
+
+        
+
+        <div class="form-group row">
+           <div class="col-auto my-1">
+              <button type="submit" class="btn btn-primary">Submit</button>
+          </div>
+          <div class="col-auto my-1">
+            <div class="custom-control custom-checkbox mr-sm-2">
+              <input type="checkbox" class="custom-control-input" id="customControlAutosizing">
+              <label class="custom-control-label" for="customControlAutosizing">Remember preference</label>
+            </div>
+          </div>
+          
+
+        </div>
+
+    </form>
+
+    <div class="album py-5 bg-light">
+      <div class="container">
+        <div class="row" id="response">
+              <div class="col-md-4">
+                <div onClick="slideInsert(this)" class="card mb-4 box-shadow generated-images" >
+                  <img id="img_1" class="card-img-top" src="https://images.squarespace-cdn.com/content/v1/6213c340453c3f502425776e/0715034d-4044-4c55-9131-e4bfd6dd20ca/2_4x.png?format=2500w" data-holder-rendered="true">
+                  <span>Click to add to slide</span>
+                  <div class="loader"></div>
+                </div>
+              </div>
+              <div class="col-md-4">
+                <div onClick="slideInsert(this.id)" class="card mb-4 box-shadow generated-images">
+                  <img id="img_2" onClick="slideInsert(this.id)" class="card-img-top" src="https://images.squarespace-cdn.com/content/v1/6213c340453c3f502425776e/0715034d-4044-4c55-9131-e4bfd6dd20ca/2_4x.png?format=2500w" data-holder-rendered="true">
+                  <span>Click to add to slide</span>
+                  <div class="loader"></div>
+                </div>
+              </div>
+        </div>
+      </div>
+    </div>
+
+
+    <!-- <div class="sidebar bottom">
+      <img alt="Add-on logo" class="logo" src="https://www.dictionary.com/e/wp-content/uploads/2018/03/Thinking_Face_Emoji-Emoji-Island.png" width="27" height="27">
+      <span class="gray branding-text">by the What If team</span>
+    </div>
+    -->
+  
+   
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+<script src="https://cdn.jsdelivr.net/npm/popper.js@1.14.7/dist/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+<script src="https://getbootstrap.com//docs/5.0/dist/js/bootstrap.bundle.min.js" integrity="sha384-MrcW6ZMFYlzcLA8Nl+NtUVF0sA7MsXsP1UyJoMp4YLEuNSfAP+JcXn/tWtIaxVXM" crossorigin="anonymous"></script>
+
+    <script src="https://gitcdn.github.io/bootstrap-toggle/2.2.2/js/bootstrap-toggle.min.js"></script>
+
+    <script>    
+      /**
+       * On document load, assign click handlers to each button and try to load the
+       * user's origin and destination language preferences if previously set.
+       */
+      /*$(function() {
+        Logger.log("in func");
+        $('#submit').click(genImages);
+        //$('#insert-text').click(insertText);
+        //google.script.run.withSuccessHandler(loadPreferences)
+        //        .withFailureHandler(showError).getPreferences();
+      });*/
+
+      function insertHTML(html) {
+        //alert("I in insertHTML! "+html);
+        $('#response').html(html);
+      }
+
+      function genImages() {
+        
+        this.disabled = true;
+        //$('#error').remove();
+        //const img-type = $('input[name=image-type]:checked').val();
+        //const img-color = $('input[name=image-color]:checked').val();
+        var description = $('#description-text').val();
+        //const savePrefs = $('#save-prefs').is(':checked');
+        //$('#response').remove()
+        google.script.run
+                .withSuccessHandler(insertHTML)
+                //.withFailureHandler()
+                //.withUserObject(this)
+                .retrieveHTMLGallery(); // rhis is on Code.gs file
+
+        //alert("I am an alert box!")
+      }
+
+
+      $(document).ready(function() {
+        $("#num-images-output").html($("#num-images").val());
+        $("#seed-output").html($("#seed").val());
+        $("#steps-output").html($("#steps").val());
+      })
+
+      function slideInsert(click_out_div) {
+        $(click_out_div).find('div:first').show();
+        $(click_out_div).find('span:first').hide();
+        $(click_out_div).find('img:first').css({"opacity": "0.5"});
+        //$('"#' + img_id+'"').attr(src);
+         google.script.run
+                .withSuccessHandler(function() {
+                  $(click_out_div).find('div:first').hide();
+                  $(click_out_div).find('span:first').show();
+                  $(click_out_div).find('img:first').removeAttr("style");
+                  })
+                //.withFailureHandler()
+                //.withUserObject(this)
+                .insertImgToSlide($(click_out_div).find('img:first').attr('src'));
+      }
+
+      function updateNumImagesOut(v){
+        $("#num-images-output").html(v);
+      }
+
+      function updateSeedOut(v){
+        $("#seed-output").html(v);
+      }
+      function toggleSeed(){
+        if ($("#seed").prop("disabled")){
+          $("#seed").prop('disabled', false);
+        }
+        else{
+          $("#seed").prop('disabled', true);
+
+        }
+      }
+      function updateStepsOut(v){
+        $("#steps-output").html(v);
+      }
+
+      
+    </script>
+</body>
+</html>
