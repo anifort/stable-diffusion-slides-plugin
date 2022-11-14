@@ -3,12 +3,14 @@ const MAX_NUM_IMGS = 4;
 const enum Orientation {
     LANDSCAPE = 'landscape',
     PORTRAIT = 'portrait',
-    SQUARE='square'
+    SQUARE='square',
+    NONE='none'
 }
 
 const enum ImgColor {
     BLACK_AND_WHITE= 'bw',
-    COLOR='colored'
+    COLOR='colored',
+    NONE='none'
 }
 
 const enum ImgType {
@@ -17,7 +19,8 @@ const enum ImgType {
     PAINTING='painting',
     SKETCH='sketch',
     ILLUSTRATION='illustration',
-    GRAPHIC_DESIGN='graphicDesign'
+    GRAPHIC_DESIGN='graphicDesign',
+    NONE='none'
 }
 
 const enum ImgStyle {
@@ -28,7 +31,8 @@ const enum ImgStyle {
     VAN_GOGH='vanGogh',
     PICASSO='picasso',
     DALI='dali',
-    YAYOI_KUSAMA = 'kusama'
+    YAYOI_KUSAMA = 'kusama',
+    NONE='none'
 }
 
 interface ImgOptions {
@@ -46,18 +50,43 @@ interface AdvancedOptions {
     negativePrompt: string,
     seed: number,
     steps: number, 
-    baseImg: Image
+    baseImg: Image,
+    randomise: boolean
 }
 
-SlidesApp.getUi().createMenu("Image Generator")
-                .addItem('Generate', 'showSidebar')
-                .addToUi();
+const defaultImgOptions : ImgOptions = {
+    description: '',
+    numImgs: 1,
+    orientation: Orientation.LANDSCAPE,
+    imgColor: ImgColor.COLOR,
+    imgStyle: ImgStyle.NONE,
+    imgType: ImgType.NONE
+}
+
+function onOpen(e) {
+    SlidesApp.getUi().createMenu("Image Generator")
+    .addItem('Generate', 'showSidebar')
+    .addToUi();
+}
 
 function showSidebar(){
-    const ui = HtmlService
-      .createHtmlOutputFromFile('sidebar')
+    const template = HtmlService
+      .createTemplateFromFile('frontend');
+
+    const ui = template.evaluate()
       .setTitle('Image Generator');
-  SlidesApp.getUi().showSidebar(ui);
+
+    SlidesApp.getUi().showSidebar(ui);
+}
+
+function getSavedOptions(): ImgOptions{
+    const userProperties = PropertiesService.getUserProperties();
+    const savedImgOptions = userProperties.getProperty('imgOptions');
+    if (savedImgOptions !== null){
+        return JSON.parse(savedImgOptions);
+    } else {
+        return defaultImgOptions;
+    }
 }
 
 function insertImgToSlide(imgUrl: string){
@@ -65,14 +94,25 @@ function insertImgToSlide(imgUrl: string){
     currentPage.insertImage(imgUrl);
 }
   
-function generateImagesFromText(imgOptions: ImgOptions, advancedOptions: AdvancedOptions, savePrefs: boolean): string[] {
-
+function generateImagesFromText(imgOptions: ImgOptions, advancedOptions: AdvancedOptions, savePrefs: boolean): string {
     if (savePrefs) {
         const userProperties = PropertiesService.getUserProperties();
         userProperties.setProperty('imgOptions', JSON.stringify(imgOptions));
         userProperties.setProperty('advancedOptions', JSON.stringify(advancedOptions));
     }
-    return generateImagesFromTextInternal(imgOptions, advancedOptions)
+    const imgUrls = generateImagesFromTextInternal(imgOptions, advancedOptions)
+    return getImageThumbnailHtml(imgUrls);
+}
+
+function getImageThumbnailHtml(imgUrls: string[]): string {
+    const output = new Array<string>();
+    const template = HtmlService.createTemplateFromFile('img_thumbnail.html');
+    for (let i = 0; i < imgUrls.length; i++){
+        template.index = i;
+        template.imgSrc = imgUrls[i];
+        output.push(template.evaluate().getContent());
+    }
+    return output.join('');
 }
 
   
