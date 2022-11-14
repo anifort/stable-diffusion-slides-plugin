@@ -11,6 +11,11 @@ const enum ImgColor {
     COLOR='colored'
 }
 
+const ImgColorPrompt = {
+    [ImgColor.BLACK_AND_WHITE]: "in black and white",
+    [ImgColor.COLOR]: "in color",
+}
+
 const enum ImgType {
     PHOTOGRAPH='photo',
     DRAWING='drawing',
@@ -18,6 +23,15 @@ const enum ImgType {
     SKETCH='sketch',
     ILLUSTRATION='illustration',
     GRAPHIC_DESIGN='graphicDesign'
+}
+
+const ImgTypePrompt = {
+    [ImgType.PHOTOGRAPH]: "a photorealistic photograph of a ",
+    [ImgType.DRAWING]: "a drawing of a ",
+    [ImgType.PAINTING]: "a painting of a ",
+    [ImgType.SKETCH]: "a sketch of a ",
+    [ImgType.ILLUSTRATION]: "an illustration of a ",
+    [ImgType.GRAPHIC_DESIGN]: "a graphic design of a ",
 }
 
 const enum ImgStyle {
@@ -29,6 +43,17 @@ const enum ImgStyle {
     PICASSO='picasso',
     DALI='dali',
     YAYOI_KUSAMA = 'kusama'
+}
+
+const ImgStylePrompt = {
+    [ImgStyle.POP_ART]: "in pop art style",
+    [ImgStyle.COMIC]: "in comic style",
+    [ImgStyle.RETRO]: "in retro style",
+    [ImgStyle.DISNEY]: "in disney style, artstudio",
+    [ImgStyle.VAN_GOGH]: "in Van Gogh style",
+    [ImgStyle.PICASSO]: "in Pablo Picasso style",
+    [ImgStyle.DALI]: "in Salvador Dali style",
+    [ImgStyle.YAYOI_KUSAMA]: "in Yayoi Kusama style",
 }
 
 interface ImgOptions {
