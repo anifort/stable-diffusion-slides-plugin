@@ -1,25 +1,88 @@
 <script>
 
-  function genImages() {
-    this.disabled = true;
+  function genImages(e) {
+    $('#submit-btn').prop('disabled', true);
+    $('#result-images').empty();
+    $('#submit-loader-template').toggleClass('loader');
+    const savePref = $('#pref').is(":checked");
     const imgOptions = getImgOptions();
     const advancedOptions = getAdvancedOptions();
     google.script.run
-      .withSuccessHandler(displayGeneratedImages)
-      .generateImagesFromText(imgOptions, advancedOptions);
+      .withSuccessHandler((imageThumbnailHtml) => {
+        displayGeneratedImages(imageThumbnailHtml);
+        $('#submit-btn').prop('disabled', false);
+        $('#submit-loader-template').toggleClass('loader');
+      })
+      .generateImagesFromText(imgOptions, advancedOptions, savePref);
   }
 
   function getImgOptions() {
-
+    const imgOptions = {};
+    imgOptions.description = $('#img-description').val();
+    imgOptions.numImgs = $('#num-images').val();
+    imgOptions.orientation = $("input[type='radio'][name='orientation']:checked").val();
+    imgOptions.imgColor = $('#img-color').val();
+    imgOptions.imgType = $('#img-type').val();
+    imgOptions.imgStyle = $('#img-style').val();
+    console.log(imgOptions);
+    return imgOptions;
   }
 
   function getAdvancedOptions() {
-
+    const advancedOptions = {};
+    advancedOptions.negativePrompt = $('#negative-prompt').val();
+    advancedOptions.seed = $('#seed').val();
+    advancedOptions.randomise = $('#randomise').val();
+    advancedOptions.steps = $('#steps').val();
+    advancedOptions.baseImage = $('#base-image').val();
+    console.log(advancedOptions);
+    return advancedOptions;
   }
 
-  function displayGeneratedImages(imageUrls) {
-
+  function displayGeneratedImages(imageThumbnailHtml) {
+    $('#result-images').append(imageThumbnailHtml);
   }
+
+  function updateNumImagesOut(v) {
+    $("#num-images-output").html(v);
+  }
+
+  function updateSeedOut(v) {
+    $("#seed-output").html(v);
+  }
+
+  function toggleSeed() {
+    if ($("#seed").prop("disabled")) {
+      $("#seed").prop('disabled', false);
+    }
+    else {
+      $("#seed").prop('disabled', true);
+
+    }
+  }
+
+  function updateStepsOut(v) {
+    $("#steps-output").html(v);
+  }
+
+  function populateFormWithSavedOptions(imgOptions) {
+    $('#img-description').val(imgOptions.description);
+    $('#num-images').val(imgOptions.numImgs);
+    $("input[name=orientation][value=" + imgOptions.orientation + "]").prop('checked', true);
+    $('#img-color').val(imgOptions.imgColor);
+    $('#img-type').val(imgOptions.imgType);
+    $('#img-style').val(imgOptions.imgStyle);
+  }
+
+
+  $(document).ready(function () {
+    google.script.run.withSuccessHandler((imgOptions) => {
+      populateFormWithSavedOptions(imgOptions);
+      $("#num-images-output").html($("#num-images").val());
+      $("#seed-output").html($("#seed").val());
+      $("#steps-output").html($("#steps").val());
+    }).getSavedOptions();
+  });
 
   // function retrieveHTMLGallery() {
   //   Logger.log("buttonClicked");
