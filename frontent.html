@@ -5,6 +5,7 @@
     <link rel="stylesheet"  href="https://cdn.jsdelivr.net/npm/bootstrap@5.2.2/dist/css/bootstrap.min.css" >
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     <link href="https://gitcdn.github.io/bootstrap-toggle/2.2.2/css/bootstrap-toggle.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://icons.getbootstrap.com/assets/font/bootstrap-icons.css">
     <style>
       .generated-images {
         position: relative;
@@ -30,7 +31,6 @@
         display: block;
         position: absolute;
         color: #000000;
-        width: 50%;
         margin: auto;
         right: 0;
         left: 0;
@@ -38,7 +38,6 @@
         text-align: center;
         vertical-align: bottom;
         border-radius: 5px;
-        background: #ccc;
         transition: 0.5s;
         opacity: 0.0;
 
@@ -316,23 +315,28 @@
       <div class="container">
         <div class="row" id="response">
               <div class="col-md-4">
-                <div onClick="slideInsert(this)" class="card mb-4 box-shadow generated-images" >
-                  <img id="img_1" class="card-img-top" src="https://images.squarespace-cdn.com/content/v1/6213c340453c3f502425776e/0715034d-4044-4c55-9131-e4bfd6dd20ca/2_4x.png?format=2500w" data-holder-rendered="true">
-                  <span>Click to add to slide</span>
+                <div class="card mb-4 box-shadow generated-images">
+                  <img id="img_2" class="card-img-top" src="https://images.squarespace-cdn.com/content/v1/6213c340453c3f502425776e/0715034d-4044-4c55-9131-e4bfd6dd20ca/2_4x.png?format=2500w" data-holder-rendered="true">
+                  <span>
+                    <button type="button" class="btn btn-primary"><i class="bi bi-plus-lg"></i></button>
+                    <button type="button" class="btn btn-secondary btn-sm">
+                    <i class="bi bi-pin"></i></button></span>
                   <div class="loader"></div>
                 </div>
               </div>
               <div class="col-md-4">
-                <div onClick="slideInsert(this.id)" class="card mb-4 box-shadow generated-images">
-                  <img id="img_2" onClick="slideInsert(this.id)" class="card-img-top" src="https://images.squarespace-cdn.com/content/v1/6213c340453c3f502425776e/0715034d-4044-4c55-9131-e4bfd6dd20ca/2_4x.png?format=2500w" data-holder-rendered="true">
-                  <span>Click to add to slide</span>
+                <div class="card mb-4 box-shadow generated-images">
+                  <img id="img_2" class="card-img-top" src="https://images.squarespace-cdn.com/content/v1/6213c340453c3f502425776e/0715034d-4044-4c55-9131-e4bfd6dd20ca/2_4x.png?format=2500w" data-holder-rendered="true">
+                  <span>
+                    <button type="button" class="btn btn-primary"><i class="bi bi-plus-lg"></i></button>  
+                    <button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pin"></i></button></span>
                   <div class="loader"></div>
                 </div>
               </div>
         </div>
       </div>
     </div>
-
+<i class="bi bi-pin"></i>
 
     <!-- <div class="sidebar bottom">
       <img alt="Add-on logo" class="logo" src="https://www.dictionary.com/e/wp-content/uploads/2018/03/Thinking_Face_Emoji-Emoji-Island.png" width="27" height="27">
