@@ -1,10 +1,11 @@
 <div class="col-md-4">
     <div class="card mb-4 box-shadow generated-images">
         <img id="result-img-<?= index ?>" class="card-img-top" src="<?= imgSrc ?>" data-holder-rendered="true">
-        <span>
-            <button type="button" class="btn btn-primary"><i class="bi bi-plus-lg"></i></button>  
-            <button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pin"></i></button>
+        <span class="action-buttons">
+            <button type="button" onclick="slideInsert(this)" class="btn btn-primary insert-image"><i
+                    class="bi bi-plus-lg"></i></button>
+            <!-- <button type="button" class="btn btn-secondary btn-sm"><i class="bi bi-pin"></i></button> -->
         </span>
-      <div class="loader"></div>
+        <div class="image-loader-template loader"></div>
     </div>
 </div>

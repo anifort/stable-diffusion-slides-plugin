@@ -1,5 +1,10 @@
 const MAX_NUM_IMGS = 4;
 
+interface Options {
+    imgOptions?: ImgOptions;
+    advancedOptions?: AdvancedOptions;
+}
+
 const enum Orientation {
     LANDSCAPE = 'landscape',
     PORTRAIT = 'portrait',
@@ -62,7 +67,7 @@ const ImgStylePrompt = {
 
 interface ImgOptions {
     description: string,
-    numImgs: number,
+    // numImgs: number,
     orientation: Orientation,
     imgColor: ImgColor,
     imgType: ImgType,
@@ -80,12 +85,20 @@ interface AdvancedOptions {
 }
 
 const defaultImgOptions : ImgOptions = {
-    description: '',
-    numImgs: 1,
+    description: 'A beautiful forest',
+    // numImgs: 1,
     orientation: Orientation.LANDSCAPE,
     imgColor: ImgColor.COLOR,
     imgStyle: ImgStyle.NONE,
     imgType: ImgType.NONE
+}
+
+const defaultAdvancedOptions: AdvancedOptions = {
+    negativePrompt: '',
+    seed: 1,
+    steps: 50, 
+    baseImg: '',
+    randomise: false
 }
 
 function onOpen(e) {
@@ -104,13 +117,14 @@ function showSidebar(){
     SlidesApp.getUi().showSidebar(ui);
 }
 
-function getSavedOptions(): ImgOptions{
+function getSavedOptions(): Options{
     const userProperties = PropertiesService.getUserProperties();
     const savedImgOptions = userProperties.getProperty('imgOptions');
-    if (savedImgOptions !== null){
-        return JSON.parse(savedImgOptions);
-    } else {
-        return defaultImgOptions;
+    const savedAdvancedOptions = userProperties.getProperty('advancedOptions');
+    
+    return {
+        imgOptions: savedImgOptions ? JSON.parse(savedImgOptions): defaultImgOptions,
+        advancedOptions: savedAdvancedOptions ? JSON.parse(savedAdvancedOptions): defaultAdvancedOptions
     }
 }
 
@@ -142,8 +156,11 @@ function getImageThumbnailHtml(imgUrls: string[]): string {
 
   
 function generateImagesFromTextInternal(imgOptions: ImgOptions, advancedOptions:AdvancedOptions):string[] {
-//     Logger.log("in imageGenAPI");
-//   // Call the API and return images 
+
+    const description = (ImgTypePrompt[imgOptions.imgType] ?? '') + ' ' + imgOptions.description + ' ' + (ImgStylePrompt[imgOptions.imgStyle] ?? '') + ' ' +  (ImgColorPrompt[imgOptions.imgColor] ?? '');
+    const seed = advancedOptions.randomise ? getRandomInt(1, 11) : advancedOptions.seed;
+    Logger.log(description);
+    Logger.log(seed);
 //   var query = '"Apps Script" stars:">=100"';
 //   var url = 'https://api.github.com/search/repositories'
 //     + '?sort=stars'
@@ -155,8 +172,15 @@ function generateImagesFromTextInternal(imgOptions: ImgOptions, advancedOptions:
 //   var data = JSON.parse(json);
   
 //   var html ='<div class="sidebar bottom"><img alt="Add-on logo" class="logo" src="https://www.dictionary.com/e/wp-content/uploads/2018/03/Thinking_Face_Emoji-Emoji-Island.png" width="27" height="27"><span class="gray branding-text">by the What If team</span></div>';
-//   // turn into html
+  // turn into html
 
 //   return html;
-    return ["https://images.squarespace-cdn.com/content/v1/6213c340453c3f502425776e/0715034d-4044-4c55-9131-e4bfd6dd20ca/2_4x.png?format=2500w"]; 
+    return ["https://images.squarespace-cdn.com/content/v1/6213c340453c3f502425776e/0715034d-4044-4c55-9131-e4bfd6dd20ca/2_4x.png?format=2500w",
+    "https://images.squarespace-cdn.com/content/v1/6213c340453c3f502425776e/0715034d-4044-4c55-9131-e4bfd6dd20ca/2_4x.png?format=2500w"]; 
 }
+
+function getRandomInt(min: number, max: number): number {
+    min = Math.ceil(min);
+    max = Math.floor(max);
+    return Math.floor(Math.random() * (max - min) + min); 
+  }
