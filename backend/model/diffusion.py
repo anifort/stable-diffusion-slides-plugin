@@ -2,6 +2,7 @@ import jax
 import numpy as np
 import jax.numpy as jnp
 from typing import List
+import threading
 
 from pathlib import Path
 from jax import pmap
@@ -52,6 +53,7 @@ def generate(pipeline, params, prompt: str, seed = 0):
 
     prompt = [prompt] * jax.device_count()
     prompt_ids = pipeline.prepare_inputs(prompt)
+    prompt_ids = shard(prompt_ids)
 
     images = pipeline(prompt_ids, params, rng, jit=True).images
 
@@ -62,19 +64,31 @@ def generate(pipeline, params, prompt: str, seed = 0):
     return images
 
 
+def store(content, filename, bkt):
+    inmem = io.BytesIO()
+    content.save(inmem, "png")
+    
+    bkt.blob(filename).upload_from_string(inmem.getvalue())
+
+
 def upload_to_gcs(images, bucket_name, storage_client):
     bkt = storage_client.bucket(bucket_name)
     filenames = []
 
+    # upload in parallel threads
+    threads = list()
     for image in images:
         filename = f'{str(uuid.uuid4())}.png'
-        inmem = io.BytesIO()
-        image.save(inmem, "png")
-        
-        bkt.blob(filename).upload_from_string(inmem.getvalue())
 
+        t = threading.Thread(target=store, args=(image, filename, bkt,))
+        threads.append(t)
+        t.start()        
         filenames.append(filename)
-
+    
+    # wait until all of them are done
+    for t in threads:
+        t.join()
+    
     return filenames
 
 
