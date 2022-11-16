@@ -51,13 +51,37 @@ def pingH():
 class Req(BaseModel):
     prompt: str
     seed: Union[int, None] = None
+
+    height: Union[int, None] = None
+    width: Union[int, None] = None
+
+    negative_prompt: Union[str, None] = None
+
+    num_steps: Union[int, None] = None
     # todo augment
+
+
+class Default:
+    seed = 0
+    height = 512
+    width = 512
+    neg_prompt = ""
+    num_steps = 50
 
 @app.post("/generate")
 async def generate_images(req: Req):
 
     files = diffusion.upload_to_gcs(
-        diffusion.generate(pipeline, params, prompt=req.prompt, seed = req.seed if req.seed else 0),
+        diffusion.generate(pipeline,
+        params,
+        prompt=req.prompt,
+        seed = req.seed if req.seed else Default.seed,
+        height = req.height if req.height else Default.height,
+        width = req.width if req.width else Default.width,
+        neg_prompt = req.negative_prompt if req.neg_prompt else Default.neg_prompt,
+        num_steps= req.num_steps if req.num_steps else Default.num_steps,
+        ),
+
         env.bucket_name,
         storage_client
     )
