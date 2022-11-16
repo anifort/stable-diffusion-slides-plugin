@@ -34,7 +34,14 @@ app = FastAPI()
 
 pipeline, params = diffusion.init(env.model_token)
 
-storage_client = None
+with open(env.creds_path) as source:
+    info = json.load(source)
+    storage_credentials = service_account.Credentials.from_service_account_info(info)
+
+    storage_client = storage.Client(project=env.project_id, credentials=storage_credentials)
+
+# warm up takes 1-2 mins
+diffusion.warmup(pipeline, params)
 
 @app.get("/ping")
 def pingH():
@@ -60,14 +67,4 @@ async def generate_images(req: Req):
     }
 
 if __name__ == "__main__":
-
-    with open(env.creds_path) as source:
-        info = json.load(source)
-        storage_credentials = service_account.Credentials.from_service_account_info(info)
-
-        storage_client = storage.Client(project=env.project_id, credentials=storage_credentials)
-    
-
-    diffusion.warmup(pipeline, params)
-
     uvicorn.run(app)
