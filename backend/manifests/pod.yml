@@ -1,0 +1,15 @@
+apiVersion: v1
+kind: Pod
+metadata:
+  name: stable-diff-tpu
+  annotations:
+     tf-version.cloud-tpus.google.com: "2.6.0"
+spec:
+  restartPolicy: OnFailure
+  containers:
+  - name: stable-diff-tpu
+    image: gcr.io/stable-diffusion-368310/backend:v3
+    resources:
+      limits:
+        # Request a single Preemptible v2-8 Cloud TPU device.
+        cloud-tpus.google.com/preemptible-v2: 8
