@@ -55,7 +55,7 @@ def generate(pipeline, params, prompt: str, height=512, width=512, neg_prompt=""
     prompt_ids = pipeline.prepare_inputs(prompt)
     prompt_ids = shard(prompt_ids)
 
-    images = pipeline(prompt_ids, params, rng, jit=True).images
+    images = pipeline(prompt_ids, params, rng, jit=True, negative_prompt=neg_prompt, height=height, width=width, num_inference_steps=num_steps).images
 
     images = images.reshape((images.shape[0] * images.shape[1], ) + images.shape[-3:])
 
