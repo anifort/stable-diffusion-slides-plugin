@@ -47,7 +47,7 @@ def init(token):
 def create_key(seed=0):
     return jax.random.PRNGKey(seed)
 
-def generate(pipeline, params, prompt: str, seed = 0):
+def generate(pipeline, params, prompt: str, height=512, width=512, neg_prompt="", num_steps=50, seed = 0):
     rng = create_key(seed)
     rng = jax.random.split(rng, jax.device_count())
 
@@ -96,5 +96,6 @@ def warmup(pipeline, params):
     static_prompt = """
         A cinematic film still of Morgan Freeman starring as Jimi Hendrix, portrait, 40mm lens, shallow depth of field, close up, split lighting, cinematic
     """
-
-    generate(pipeline, params, static_prompt)
+    generate(pipeline, params, static_prompt, height=512, width=512)
+    generate(pipeline, params, static_prompt, height=384, width=512)
+    generate(pipeline, params, static_prompt, height=920, width=512)

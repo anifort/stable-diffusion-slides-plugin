@@ -1,0 +1,11 @@
+prompt: str - Required
+
+seed: int  -  Optional
+height: int - Optional
+width: int - Optional
+
+negative_prompt: str - Optional
+
+num_steps: int - Optional
+
+guidance_scale: float  - Optional

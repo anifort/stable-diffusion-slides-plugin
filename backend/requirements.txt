@@ -10,7 +10,7 @@ click==8.1.3
 commonmark==0.9.1
 contourpy==1.0.6
 cycler==0.11.0
-diffusers==0.6.0
+diffusers @ git+https://github.com/bisakhmondal/diffusers.git@a25db25da6318d154ed02e958e3b0170cfc0223b
 dill==0.3.6
 dm-tree==0.1.7
 fastapi==0.87.0
