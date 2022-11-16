@@ -70,7 +70,8 @@ class Default:
 
 @app.post("/generate")
 async def generate_images(req: Req):
-
+    print(req.height, req.width)
+    
     files = diffusion.upload_to_gcs(
         diffusion.generate(pipeline,
         params,
@@ -78,7 +79,7 @@ async def generate_images(req: Req):
         seed = req.seed if req.seed else Default.seed,
         height = req.height if req.height else Default.height,
         width = req.width if req.width else Default.width,
-        neg_prompt = req.negative_prompt if req.neg_prompt else Default.neg_prompt,
+        neg_prompt = req.negative_prompt if req.negative_prompt else Default.neg_prompt,
         num_steps= req.num_steps if req.num_steps else Default.num_steps,
         ),
 
