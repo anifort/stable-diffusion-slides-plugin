@@ -96,6 +96,6 @@ def warmup(pipeline, params):
     static_prompt = """
         A cinematic film still of Morgan Freeman starring as Jimi Hendrix, portrait, 40mm lens, shallow depth of field, close up, split lighting, cinematic
     """
+    generate(pipeline, params, static_prompt, height=768, width=512)
     generate(pipeline, params, static_prompt, height=512, width=512)
     generate(pipeline, params, static_prompt, height=384, width=512)
-    generate(pipeline, params, static_prompt, height=920, width=512)
